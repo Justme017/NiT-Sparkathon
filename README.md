@@ -47,7 +47,7 @@ The winning team will be determined by a cumulative score based on:
 * **Innovation & Creativity (35%)**
 * **Technical Execution (30%)**
 * **Design & User Experience (15%)**
-* **Presentation (10%)**
+* **Presentation (20%)**
 * **Community Engagement (10%)** (Based on LinkedIn likes)
 
 Good luck, and we can't wait to see what you build!
