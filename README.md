@@ -13,7 +13,7 @@ The **NiT Sparkathon** is an invention marathon where innovators, students, and 
 Our mission is to bridge the gap between idea and impact. We provide the hardware, mentorship, and a creative environment; you bring the vision and the drive to build the future.
 
 * **What:** A 2-day hardware hackathon.
-* **Where:** Room E25, Northern Institute of Technology Management (NiT), Hamburg.
+* **Where:** Room E08, Northern Institute of Technology Management (NiT), Hamburg.
 * **When:** October 8-9, 2025.
 * **Theme:** Solving real-world problems with physical prototypes.
 
