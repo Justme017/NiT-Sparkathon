@@ -45,7 +45,7 @@ Your final submission must be a **pull request** that includes a `README.md` fil
 The winning team will be determined by a cumulative score based on:
 
 * **Innovation & Creativity (35%)**
-* **Technical Execution (30%)**
+* **Technical Execution (20%)**
 * **Design & User Experience (15%)**
 * **Presentation (20%)**
 * **Community Engagement (10%)** (Based on LinkedIn likes)
