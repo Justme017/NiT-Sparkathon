@@ -1,209 +1,179 @@
 #include <WiFi.h>
-#include <WebServer.h>
-#include "esp_camera.h"
-#include "esp_http_server.h"
-#include "driver/i2s.h"
+#include <WiFiClientSecure.h>
+#include <HTTPClient.h>
 
-// ===== Wi-Fi Credentials =====
-const char* ssid     = "NITM";
-const char* password = "NITM1937";
+// ----- Sound-Setup -----
+#define SPEAKER_PIN A3 // G  (achte darauf, dass der gewählte Pin auf deinem Board für tone() geeignet ist)
 
-// ===== Camera Pins (XIAO ESP32-S3 Sense) =====
-void init_camera() {
-  camera_config_t config;
-  config.ledc_channel = LEDC_CHANNEL_0;
-  config.ledc_timer   = LEDC_TIMER_0;
-  config.pin_d0       = 15;
-  config.pin_d1       = 17;
-  config.pin_d2       = 18;
-  config.pin_d3       = 16;
-  config.pin_d4       = 14;
-  config.pin_d5       = 12;
-  config.pin_d6       = 11;
-  config.pin_d7       = 48;
-  config.pin_xclk     = 10;
-  config.pin_pclk     = 13;
-  config.pin_vsync    = 38;
-  config.pin_href     = 47;
-  config.pin_sccb_sda = 40;
-  config.pin_sccb_scl = 39;
-  config.pin_pwdn     = -1;
-  config.pin_reset    = -1;
-  config.xclk_freq_hz = 20000000;
-  config.pixel_format = PIXFORMAT_JPEG;
-  config.frame_size   = FRAMESIZE_QVGA;
-  config.jpeg_quality = 12;
-  config.fb_count     = 2;
+// Alarm-Sound-Variablen
+unsigned long lastAlarmToggle = 0;
+bool alarmToneHigh = true;
+unsigned long alarmStartTime = 0;
+bool alarmActive = false;
 
-  if (esp_camera_init(&config) != ESP_OK) {
-    Serial.println("[CAM] Camera init failed!");
-    while (1);
-  }
-  Serial.println("[CAM] Camera ready.");
-}
+// Alarm-Frequenzen für dramatischen Effekt
+const int ALARM_FREQ_HIGH = 1200;  // Hohe Frequenz
+const int ALARM_FREQ_LOW = 800;    // Tiefe Frequenz
+const int ALARM_TOGGLE_INTERVAL = 150; // Schneller Wechsel für Dringlichkeit
 
-// ===== Audio (I2S PDM Mic) =====
-#define SAMPLE_RATE 16000
-#define I2S_PORT    I2S_NUM_0
-#define I2S_PIN_CLK 42  // BCLK
-#define I2S_PIN_DATA 41 // DOUT
-
-void init_audio() {
-  i2s_config_t i2s_config = {
-      .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX | I2S_MODE_PDM),
-      .sample_rate = SAMPLE_RATE,
-      .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
-      .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT,
-      .communication_format = I2S_COMM_FORMAT_STAND_I2S,
-      .intr_alloc_flags = 0,
-      .dma_buf_count = 4,
-      .dma_buf_len = 256,
-      .use_apll = false,
-  };
-
-  i2s_pin_config_t pin_config = {
-      .bck_io_num = I2S_PIN_CLK,
-      .ws_io_num = -1,
-      .data_out_num = -1,
-      .data_in_num = I2S_PIN_DATA,
-  };
-
-  i2s_driver_install(I2S_PORT, &i2s_config, 0, NULL);
-  i2s_set_pin(I2S_PORT, &pin_config);
-  Serial.println("[AUDIO] Mic ready.");
-}
-
-// ===== MJPEG Stream Handler =====
-static esp_err_t stream_handler(httpd_req_t *req) {
-  camera_fb_t *fb = NULL;
-  esp_err_t res = httpd_resp_set_type(req, "multipart/x-mixed-replace;boundary=frame");
-  if (res != ESP_OK) return res;
-
-  while (true) {
-    fb = esp_camera_fb_get();
-    if (!fb) {
-      res = ESP_FAIL;
+void playAlarmSound() {
+  if (!alarmActive) return;
+  
+  unsigned long currentTime = millis();
+  
+  // Schnell zwischen hohen und tiefen Tönen wechseln
+  if (currentTime - lastAlarmToggle >= ALARM_TOGGLE_INTERVAL) {
+    noTone(SPEAKER_PIN);
+    
+    if (alarmToneHigh) {
+      tone(SPEAKER_PIN, ALARM_FREQ_HIGH, ALARM_TOGGLE_INTERVAL - 10);
     } else {
-      char part_buf[64];
-      snprintf(part_buf, 64,
-               "--frame\r\nContent-Type: image/jpeg\r\nContent-Length: %u\r\n\r\n",
-               fb->len);
-      res = httpd_resp_send_chunk(req, part_buf, strlen(part_buf));
-      if (res == ESP_OK)
-        res = httpd_resp_send_chunk(req, (const char *)fb->buf, fb->len);
-      if (res == ESP_OK)
-        res = httpd_resp_send_chunk(req, "\r\n", 2);
-      esp_camera_fb_return(fb);
+      tone(SPEAKER_PIN, ALARM_FREQ_LOW, ALARM_TOGGLE_INTERVAL - 10);
     }
-    if (res != ESP_OK) break;
-    vTaskDelay(30 / portTICK_PERIOD_MS);
-  }
-  return res;
-}
-
-// ===== Audio JSON Handler =====
-static esp_err_t audio_handler(httpd_req_t *req) {
-  int16_t buffer[256];
-  size_t bytes_read;
-  i2s_read(I2S_PORT, (void *)buffer, sizeof(buffer), &bytes_read, portMAX_DELAY);
-
-  long sum = 0;
-  int samples = bytes_read / 2;
-  for (int i = 0; i < samples; i++) {
-    sum += abs(buffer[i]);
-  }
-  int avg = sum / samples;
-
-  char response[64];
-  snprintf(response, sizeof(response), "{\"volume\": %d}", avg);
-  httpd_resp_set_type(req, "application/json");
-  return httpd_resp_send(req, response, strlen(response));
-}
-
-// ===== Webpage for Oscillating Lines =====
-static const char PROGMEM html_page[] = R"rawliteral(
-<!DOCTYPE html>
-<html>
-<head><title>ESP32 Audio Visualizer</title></head>
-<body>
-<h2>Audio Oscilloscope</h2>
-<canvas id="wave" width="400" height="100" style="border:1px solid black;"></canvas>
-<script>
-let ctx=document.getElementById('wave').getContext('2d');
-setInterval(async()=>{
- let res=await fetch('/audio');
- let data=await res.json();
- let vol=data.volume/100;
- ctx.fillStyle="white"; ctx.fillRect(0,0,400,100);
- ctx.strokeStyle="green"; ctx.beginPath();
- for(let x=0;x<400;x++){
-   let y=50+Math.sin(x/10+Date.now()/200)*vol;
-   ctx.lineTo(x,y);
- }
- ctx.stroke();
-},200);
-</script>
-</body>
-</html>
-)rawliteral";
-
-static esp_err_t page_handler(httpd_req_t *req) {
-  httpd_resp_set_type(req, "text/html");
-  return httpd_resp_send(req, html_page, strlen(html_page));
-}
-
-// ===== Start Server =====
-void startServer() {
-  httpd_config_t config = HTTPD_DEFAULT_CONFIG();
-  config.server_port = 80;
-
-  httpd_handle_t server = NULL;
-  if (httpd_start(&server, &config) == ESP_OK) {
-    httpd_uri_t stream_uri = { .uri = "/", .method = HTTP_GET, .handler = stream_handler, .user_ctx = NULL };
-    httpd_uri_t audio_uri  = { .uri = "/audio", .method = HTTP_GET, .handler = audio_handler, .user_ctx = NULL };
-    httpd_uri_t page_uri   = { .uri = "/wave", .method = HTTP_GET, .handler = page_handler, .user_ctx = NULL };
-    httpd_register_uri_handler(server, &stream_uri);
-    httpd_register_uri_handler(server, &audio_uri);
-    httpd_register_uri_handler(server, &page_uri);
+    
+    alarmToneHigh = !alarmToneHigh;
+    lastAlarmToggle = currentTime;
   }
 }
 
-// ===== WiFi Connect with AP Fallback =====
+void startAlarm() {
+  alarmActive = true;
+  alarmStartTime = millis();
+  lastAlarmToggle = millis();
+  Serial.println("🚨 ALARM GESTARTET!");
+}
+
+void stopAlarm() {
+  alarmActive = false;
+  noTone(SPEAKER_PIN);
+  Serial.println("🔇 Alarm gestoppt.");
+}
+
+// Wartet ms Millisekunden und spielt dabei Alarm-Sound (ohne blocking delays)
+void waitWithAlarm(uint32_t ms) {
+  unsigned long startTime = millis();
+  startAlarm();
+  
+  Serial.println("🚨 Alarm läuft für 10 Sekunden...");
+  
+  while (millis() - startTime < ms) {
+    playAlarmSound();
+    // Minimale Pause für Watchdog, ohne den Sound zu unterbrechen
+    yield(); 
+  }
+  
+  stopAlarm();
+}
+
+// ----- Netzwerk-Setup -----
+constexpr const char* WIFI_SSID     = "THINK_NET";
+constexpr const char* WIFI_PASSWORD = "TVWn1TEurgH5J";
+
+// Dein Webhook:
+constexpr const char* WEBHOOK_URL = "https://naminatorasdf.app.n8n.cloud/webhook-test/9ff80410-7345-45c5-9231-e25e10c27e0d";
+
+// Optional: Timeout-Parameter
+constexpr uint32_t WIFI_CONNECT_TIMEOUT_MS = 20000; // 20s
+
 bool connectWiFi() {
+  Serial.print("Verbinde mit WLAN: ");
+  Serial.println(WIFI_SSID);
+
   WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-  Serial.print("[WiFi] Connecting");
-  int retries = 0;
-  while (WiFi.status() != WL_CONNECTED && retries < 20) {
-    delay(500); Serial.print(".");
-    retries++;
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
+  const uint32_t start = millis();
+  unsigned long lastDot = millis();
+  
+  while (WiFi.status() != WL_CONNECTED && (millis() - start) < WIFI_CONNECT_TIMEOUT_MS) {
+    if (millis() - lastDot >= 250) {
+      Serial.print(".");
+      lastDot = millis();
+    }
+    yield(); // Nicht-blockierend, gibt CPU frei
   }
   Serial.println();
+
   if (WiFi.status() == WL_CONNECTED) {
-    Serial.println("[WiFi] Connected!");
-    Serial.print("[WiFi] IP: "); Serial.println(WiFi.localIP());
+    Serial.print("WLAN verbunden. IP: ");
+    Serial.println(WiFi.localIP());
     return true;
   } else {
-    Serial.println("[WiFi] STA failed, starting AP...");
-    WiFi.mode(WIFI_AP);
-    WiFi.softAP("ESP32-Cam", "12345678");
-    Serial.print("[WiFi] AP IP: "); Serial.println(WiFi.softAPIP());
+    Serial.println("WLAN-Verbindung fehlgeschlagen.");
     return false;
   }
 }
 
-// ===== MAIN =====
+int sendGetRequest(const char* url) {
+  // Für HTTPS:
+  WiFiClientSecure secureClient;
+  secureClient.setInsecure();  // akzeptiert jedes Zertifikat (für Produktion besser Fingerprint/Root-CA nutzen)
+
+  HTTPClient http;
+  Serial.print("Sende GET an: ");
+  Serial.println(url);
+
+  if (!http.begin(secureClient, url)) {
+    Serial.println("HTTP begin() fehlgeschlagen.");
+    return -1;
+  }
+
+  int httpCode = http.GET();  // Request senden
+  if (httpCode > 0) {
+    Serial.printf("HTTP Status: %d\n", httpCode);
+    String payload = http.getString();
+    Serial.println("Antwort:");
+    Serial.println(payload);
+  } else {
+    Serial.printf("HTTP Fehler: %s\n", http.errorToString(httpCode).c_str());
+  }
+
+  http.end();
+  return httpCode;
+}
+
 void setup() {
   Serial.begin(115200);
-  delay(1000);
-  Serial.println("[SETUP] Starting...");
+  // Kurze Pause für Serial-Initialisierung (nicht-blockierend)
+  unsigned long initStart = millis();
+  while (millis() - initStart < 20) yield();
 
-  connectWiFi();
-  init_camera();
-  init_audio();
-  startServer();
+  if (!connectWiFi()) {
+    // Wenn kein WLAN, später nochmal versuchen (nicht-blockierend)
+    while (WiFi.status() != WL_CONNECTED) {
+      Serial.println("WLAN neu versuchen in 5s …");
+      unsigned long retryStart = millis();
+      while (millis() - retryStart < 5000) {
+        yield(); // CPU freigeben während Wartezeit
+      }
+      connectWiFi();
+    }
+  }
+
+  // Erst Webhook-Request senden
+  Serial.println("Sende Webhook-Request...");
+  int code = sendGetRequest(WEBHOOK_URL);
+  Serial.printf("Webhook-Request abgeschlossen (Code: %d).\n", code);
+
+  // Dann 5 Sekunden warten und Alarm abspielen
+  Serial.println("Warte 5 Sekunden, dann Alarm für 10 Sekunden...");
+  unsigned long waitStart = millis();
+  while (millis() - waitStart < 5000) {
+    yield(); // Nicht-blockierende Wartezeit
+  }
+  
+  waitWithAlarm(10000);
 }
 
 void loop() {
-  // Nothing; HTTP + I2S run in background
+  // Nichts weiter zu tun.
+  // Optional: Deep Sleep oder periodisch erneut senden.
+  
+  // Nicht-blockierende Pause
+  static unsigned long lastLoop = millis();
+  if (millis() - lastLoop >= 1000) {
+    lastLoop = millis();
+    // Hier könnte periodisches Verhalten stehen
+  }
+  yield(); // CPU freigeben
 }
