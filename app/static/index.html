@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +11,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: Arial, sans-serif;
             display: flex;
@@ -22,7 +23,7 @@
             overflow-x: hidden;
             position: relative;
         }
-        
+
         .stars {
             width: 1px;
             height: 1px;
@@ -43,7 +44,7 @@
                 95vw 75vh 2px white;
             animation: twinkle 8s infinite linear;
         }
-        
+
         .stars::after {
             content: "";
             position: absolute;
@@ -59,7 +60,7 @@
                 51vw 92vh 2px white, 59vw 78vh 1px white;
             animation: twinkle 6s infinite linear reverse;
         }
-        
+
         .shooting-star {
             position: absolute;
             width: 100px;
@@ -67,73 +68,77 @@
             background: linear-gradient(90deg, white, transparent);
             animation: shoot 3s infinite ease-in;
         }
-        
+
         .shooting-star:nth-child(2) {
             top: 20%;
             left: -100px;
             animation-delay: 0s;
         }
-        
+
         .shooting-star:nth-child(3) {
             top: 35%;
             left: -100px;
             animation-delay: 1s;
         }
-        
+
         .shooting-star:nth-child(4) {
             top: 50%;
             left: -100px;
             animation-delay: 2s;
         }
-        
+
         .shooting-star:nth-child(5) {
             top: 65%;
             left: -100px;
             animation-delay: 1.5s;
         }
-        
+
         .shooting-star:nth-child(6) {
             top: 80%;
             left: -100px;
             animation-delay: 0.5s;
         }
-        
+
         @keyframes twinkle {
-            0%, 100% {
+
+            0%,
+            100% {
                 opacity: 0.8;
             }
+
             50% {
                 opacity: 0.4;
             }
         }
-        
+
         @keyframes shoot {
             0% {
                 transform: translateX(0) translateY(0) rotate(25deg);
                 opacity: 1;
             }
+
             100% {
                 transform: translateX(120vw) translateY(50vh) rotate(25deg);
                 opacity: 0;
             }
         }
-        
+
         .container {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
             text-align: center;
             position: relative;
             z-index: 10;
         }
-        
+
         h1 {
             margin-bottom: 30px;
             color: #333;
         }
-        
+
         .progress-container {
             position: relative;
             width: 200px;
@@ -142,7 +147,7 @@
             perspective: 1000px;
             cursor: pointer;
         }
-        
+
         .circle-inner {
             width: 100%;
             height: 100%;
@@ -150,12 +155,13 @@
             transform-style: preserve-3d;
             transition: transform 0.6s;
         }
-        
+
         .progress-container.flipped .circle-inner {
             transform: rotateY(180deg);
         }
-        
-        .circle-front, .circle-back {
+
+        .circle-front,
+        .circle-back {
             position: absolute;
             width: 100%;
             height: 100%;
@@ -165,11 +171,11 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .progress-container.flipped .circle-front {
             visibility: hidden;
         }
-        
+
         .circle-back {
             transform: rotateY(180deg);
             flex-direction: column;
@@ -177,7 +183,7 @@
             background: transparent;
             border-radius: 50%;
         }
-        
+
         .mood-text {
             font-size: 18px;
             font-weight: 600;
@@ -185,42 +191,42 @@
             text-align: center;
             padding: 20px;
         }
-        
+
         .mood-indicator {
             font-size: 48px;
         }
-        
+
         .circle-progress-value {
             stroke-width: 6px;
             stroke: hsl(39, 100%, 50%);
         }
-        
+
         .circle-progress-circle {
             stroke-width: 6px;
             stroke: hsl(39, 100%, 85%);
         }
-        
+
         .circle-progress-text {
             fill: hsl(39, 100%, 50%);
             font-size: 36px;
             font-weight: bold;
         }
-        
+
         .stats {
             margin-top: 20px;
         }
-        
+
         .stat-item {
             margin: 10px 0;
             font-size: 18px;
             color: #555;
         }
-        
+
         .stat-value {
             font-weight: bold;
             color: #555;
         }
-        
+
         button {
             margin-top: 20px;
             padding: 12px 24px;
@@ -232,25 +238,25 @@
             cursor: pointer;
             transition: background 0.3s;
         }
-        
+
         button:hover {
             background: #764ba2;
         }
-        
+
         .chart-container {
             margin: 30px 0;
             padding: 20px;
             background: transparent;
             border-radius: 12px;
         }
-        
+
         .chart-title {
             font-size: 18px;
             font-weight: bold;
             color: #333;
             margin-bottom: 15px;
         }
-        
+
         .bar-chart {
             display: flex;
             align-items: flex-end;
@@ -258,7 +264,7 @@
             height: 150px;
             gap: 8px;
         }
-        
+
         .bar-wrapper {
             flex: 1;
             display: flex;
@@ -269,12 +275,12 @@
             border-radius: 8px;
             transition: all 0.3s;
         }
-        
+
         .bar-wrapper.today {
             background: linear-gradient(135deg, rgba(107, 108, 111, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
             box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
         }
-        
+
         .bar {
             width: 20px;
             background: linear-gradient(180deg, #ff6b6b 0%, #ff4757 100%);
@@ -283,23 +289,23 @@
             transition: all 0.3s;
             position: relative;
         }
-        
+
         .bar:hover {
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(255, 75, 87, 0.4);
         }
-        
+
         .bar-label {
             font-size: 12px;
             color: #666;
             font-weight: 500;
         }
-        
+
         .bar-wrapper.today .bar-label {
             color: #38383b;
             font-weight: 700;
         }
-        
+
         .bar-tooltip {
             position: absolute;
             bottom: 100%;
@@ -316,12 +322,13 @@
             transition: opacity 0.3s;
             margin-bottom: 5px;
         }
-        
+
         .bar:hover .bar-tooltip {
             opacity: 1;
         }
     </style>
 </head>
+
 <body>
     <div class="stars"></div>
     <div class="shooting-star"></div>
@@ -329,19 +336,19 @@
     <div class="shooting-star"></div>
     <div class="shooting-star"></div>
     <div class="shooting-star"></div>
-    
+
     <div class="container">
         <h1>Stress Tracker</h1>
-        
+
         <div class="progress-container" onclick="flipCircle()">
             <div class="circle-inner">
                 <div class="circle-front">
                     <svg width="200" height="200">
                         <circle cx="100" cy="100" r="90" fill="none" class="circle-progress-circle" />
                         <circle id="progressCircle" cx="100" cy="100" r="90" fill="none" class="circle-progress-value"
-                            stroke-dasharray="565.48" stroke-dashoffset="565.48" 
-                            transform="rotate(-90 100 100)" />
-                        <text id="progressText" x="100" y="110" text-anchor="middle" class="circle-progress-text">0%</text>
+                            stroke-dasharray="565.48" stroke-dashoffset="565.48" transform="rotate(-90 100 100)" />
+                        <text id="progressText" x="100" y="110" text-anchor="middle"
+                            class="circle-progress-text">0%</text>
                     </svg>
                 </div>
                 <div class="circle-back">
@@ -350,88 +357,88 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="stats">
             <div class="stat-item">
-                Gesamtzeit: <span class="stat-value" id="totalSeconds">0</span> Sekunden
-            </div>
-            <div class="stat-item">
-                In Minuten: <span class="stat-value" id="totalMinutes">0</span> min
+                <span class="stat-value" id="quote">Keep it up you are doing great!</span>
             </div>
         </div>
-        
+
         <!-- Bar Chart -->
         <div class="chart-container">
             <div class="bar-chart" id="barChart">
                 <!-- Bars werden dynamisch generiert -->
             </div>
         </div>
-        
+
         <button onclick="loadData()">Aktualisieren</button>
     </div>
-    
+
     <script>
         function flipCircle() {
             const container = document.querySelector('.progress-container');
             container.classList.toggle('flipped');
         }
-        
+
         function updateMoodDisplay(percent) {
             const moodEmoji = document.getElementById('moodEmoji');
             const moodText = document.getElementById('moodText');
-            
-            if (percent > 50) {
+            const motText = document.getElementById('quote');
+
+            if (percent <= 50) {
                 moodEmoji.textContent = '😰';
                 moodText.textContent = 'Stressed';
+                motText.textContent = 'You are reverting back to bad habits, try to calm down!';
             } else {
                 moodEmoji.textContent = '😌';
                 moodText.textContent = 'Calm';
+                motText.textContent = 'You are doing great, keep it up!';
             }
         }
-        
+
         // Dummy-Daten für die letzten 7 Tage (Gestresste Minuten)
         function generateWeeklyData() {
             const days = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
-            
+
             // Aktueller Wochentag (0=Mo, 1=Di, ..., 6=So)
             const today = new Date().getDay();
             const todayIndex = today === 0 ? 6 : today - 1;
-            
+
             // Nur bis heute Daten, danach null
             const stressedMinutes = [60, 8, 15, 20, 5, 3, 18].map((val, idx) => {
                 return idx <= todayIndex ? val : null;
             });
-            
-            return { days, stressedMinutes, todayIndex };
+
+            return {days, stressedMinutes, todayIndex};
         }
-        
+
         function renderBarChart() {
-            const { days, stressedMinutes, todayIndex } = generateWeeklyData();
-            const maxMinutes = Math.max(...stressedMinutes.filter(m => m !== null), 20);
+            const {days, stressedMinutes, todayIndex} = generateWeeklyData();
+            const maxMinutes = Math.max(...stressedMinutes.filter(m => m !== null), 100);
             const barChart = document.getElementById('barChart');
-            
+
             barChart.innerHTML = ''; // Clear existing bars
-            
+
             days.forEach((day, index) => {
                 const minutes = stressedMinutes[index];
-                
+
                 const barWrapper = document.createElement('div');
                 barWrapper.className = 'bar-wrapper';
-                
+
                 // Highlight für heutigen Tag
                 if (index === todayIndex) {
                     barWrapper.classList.add('today');
                 }
-                
+
                 const bar = document.createElement('div');
                 bar.className = 'bar';
-                
+
                 // Nur Daten bis heute anzeigen
                 if (minutes !== null) {
                     const heightPercent = (minutes / maxMinutes) * 100;
-                    bar.style.height = heightPercent + '%';
+                    bar.style.height = heightPercent + 'px';
                     bar.style.minHeight = '10px';
-                    
+
                     const tooltip = document.createElement('div');
                     tooltip.className = 'bar-tooltip';
                     tooltip.textContent = `${minutes} min`;
@@ -440,53 +447,54 @@
                     bar.style.height = '0';
                     bar.style.opacity = '0.3';
                 }
-                
+
                 const label = document.createElement('div');
                 label.className = 'bar-label';
                 label.textContent = day;
-                
+
                 barWrapper.appendChild(bar);
                 barWrapper.appendChild(label);
                 barChart.appendChild(barWrapper);
             });
         }
-        
+
         async function loadData() {
             try {
                 const response = await fetch('/api/data');
                 const data = await response.json();
-                
+
                 // Daten aktualisieren
-                document.getElementById('totalSeconds').textContent = data.total_speak_time_seconds.toFixed(1);
-                document.getElementById('totalMinutes').textContent = data.total_speak_time_minutes;
-                
+                // document.getElementById('totalSeconds').textContent = data.total_speak_time_seconds.toFixed(1);
+                // document.getElementById('totalMinutes').textContent = data.total_speak_time_minutes;
+
                 // Progress Circle aktualisieren (max 60 Sekunden = 100%)
-                const maxSeconds = 60;
-                const percent = Math.min((data.total_speak_time_seconds / maxSeconds) * 100, 100);
-                
+                // const maxSeconds = 60;
+                const percent = data["score"]; // Math.min((data.total_speak_time_seconds / maxSeconds) * 100, 100);
+
                 const circle = document.getElementById('progressCircle');
                 const text = document.getElementById('progressText');
                 const circumference = 565.48;
                 const offset = circumference - (percent / 100) * circumference;
-                
+
                 circle.style.strokeDashoffset = offset;
                 text.textContent = Math.round(percent) + '%';
-                
+
                 // Mood basierend auf Prozent aktualisieren
                 updateMoodDisplay(percent);
-                
+
                 // Bar Chart rendern
                 renderBarChart();
-                
+
             } catch (error) {
                 console.error('Fehler beim Laden der Daten:', error);
             }
         }
-        
+
         loadData();
-        
-        // Automatisch alle 5 Sekunden aktualisieren
-        setInterval(loadData, 5000);
+
+        // Automatisch alle 3 Sekunden aktualisieren
+        setInterval(loadData, 3000);
     </script>
 </body>
+
 </html>
