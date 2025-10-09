@@ -1,53 +1,70 @@
-# NiT Sparkathon 2025
+🩺 Product Name Ideas (choose one — all are strong)
+Name	Meaning & Feel
+HeartLink	Connects hearts — between elderly and their loved ones. Emotional + techy.
+PulseGuard	Protects the pulse — simple, powerful, and safety-focused.
+CarePulse	Care + pulse = warmth + monitoring. Perfect balance of empathy and tech.
+VitaBand	Vita = life — “Band for life.” Elegant and global-sounding.
+Sentra	From “Sentinel” — guardian that senses. Short, premium, future-ready.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+👉 Recommendation: PulseGuard (clear, safety + heart focus).
 
-**Official repository for the NiT Sparkathon, a 2-day hardware hackathon focused on solving real-world problems with physical prototypes. Hosted at the Northern Institute of Technology Management in Hamburg.**
+💡 Product Description
 
----
+PulseGuard is a smart safety and health monitoring band designed especially for the elderly.
+It continuously tracks key vital signals such as heart rate, motion, and activity, detects anomalies or potential falls, and instantly alerts family members or caregivers in case of irregularities — ensuring that no moment of distress goes unnoticed.
 
-## About the Event
+Beyond monitoring, PulseGuard empowers seniors to live independent, confident, and connected lives — while giving families peace of mind that their loved ones are safe.
 
-The **NiT Sparkathon** is an invention marathon where innovators, students, and founders come together to build tangible solutions to real-world challenges. Over two intensive days, teams will ideate, design, and build a working hardware prototype from the ground up.
+🌍 Mission
 
-Our mission is to bridge the gap between idea and impact. We provide the hardware, mentorship, and a creative environment; you bring the vision and the drive to build the future.
+To safeguard the heart and wellbeing of every elderly person through intelligent, compassionate, and transparent technology.
 
-* **What:** A 2-day hardware hackathon.
-* **Where:** Room E08, Northern Institute of Technology Management (NiT), Hamburg.
-* **When:** October 8-9, 2025.
-* **Theme:** Solving real-world problems with physical prototypes.
+We believe that aging with independence should never mean aging alone.
+PulseGuard bridges technology and human connection — turning every heartbeat into a message of safety and care.
 
----
+🔭 Vision
 
-## How to Participate
+A world where no senior faces medical emergencies alone — where families, caregivers, and technology work together in harmony to protect life and dignity.
 
-1.  **Apply:** Register for the event at [www.nitsparkathon.framer.ai](http://www.nitsparkathon.framer.ai).
-2.  **Fork this Repository:** All teams must fork this repository to start their project. It contains the official rules, resources, and submission guidelines.
-3.  **Build:** Use the provided hardware and your own creativity to build your prototype during the hackathon.
-4.  **Submit:** Before the deadline, create a pull request to this repository with a link to your project's repository and all other submission deliverables.
+In the long term, PulseGuard aims to become the standard in intelligent elder care, combining wearable innovation, predictive health insights, and privacy-first design to support millions of families globally.
 
----
+⚙️ How It Works
 
-## Submission Requirements
+Continuous Monitoring:
+Sensors track heart rate, motion, and activity patterns.
 
-Your final submission must be a **pull request** that includes a `README.md` file in your forked repository containing:
+Smart Alerts:
+If the system detects unusual heart activity or sudden movement patterns (e.g., a fall), it immediately sends alerts to caregivers via an app or SMS.
 
-* **Project Title:** A catchy name for your invention.
-* **Description:** A clear explanation of the problem you are solving and how your prototype works.
-* **Video Link:** A link to a 2-minute (max) video demonstrating your project.
-* **LinkedIn Post Link:** A link to your team's official LinkedIn post for the Community Engagement score.
-* **Attribution:** A list of any significant open-source libraries, APIs, or other external resources used.
+Real-Time Dashboard:
+A simple mobile app displays real-time vitals and trends, helping families track wellbeing.
 
----
+Consent-Based Data:
+Users control what’s shared — only essential data for safety alerts are transmitted, ensuring privacy.
 
-## Judging Criteria
+Predictive Safety:
+With time, the system learns personal baselines and flags early deviations before they become emergencies.
 
-The winning team will be determined by a cumulative score based on:
+❤️ Key Features
 
-* **Innovation & Creativity (35%)**
-* **Technical Execution (20%)**
-* **Design & User Experience (15%)**
-* **Presentation (20%)**
-* **Community Engagement (10%)** (Based on LinkedIn likes)
+🔔 Instant Safety Alerts (for falls, heart irregularities, inactivity)
 
-Good luck, and we can't wait to see what you build!
+🫀 Continuous Heart Monitoring (personalized thresholds)
+
+📊 Health Insights Dashboard
+
+📍 Location Sharing (Optional) for emergency response
+
+🧘 Gentle Reminders (medication, hydration, movement)
+
+🔒 Privacy Controls & Data Ownership
+
+💬 Taglines (choose one for your presentation)
+
+“Every heartbeat matters.”
+
+“Safety you can wear.”
+
+“Guarding hearts, connecting families.”
+
+“Peace of mind in a pulse.”
