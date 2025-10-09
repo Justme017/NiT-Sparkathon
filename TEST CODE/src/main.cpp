@@ -41,6 +41,10 @@ void setup() {
     Serial.println("Failed to initialize I2S!");
     while (1); // do nothing
   }
+
+  // Innitialize vibration motor pin
+  pinMode(D2, OUTPUT);
+  digitalWrite(D2, LOW); // turn it off
 }
 
 void loop() {
@@ -52,10 +56,12 @@ void loop() {
 
     if (sample && sample != -1 && sample != 1) {
       avg += sample;
-      //Serial.println(sample);
+      // Serial.println(sample);
     }
   }
   avg /= 1000;
+
+  // Serial.println(avg);
   
   if(WiFi.status()== WL_CONNECTED){
       WiFiClient client;
@@ -69,12 +75,15 @@ void loop() {
 
       String httpRequestData;
       // Data to send with HTTP POST
-      if (avg < 1200 || avg > 1400) {
+      if (avg < 1240 || avg > 1360) {
         Serial.print("STRESSFUL\n");
-        httpRequestData = "{\"status\":1}"; 
+        httpRequestData = "{\"status\":1}";
+        digitalWrite(D2, HIGH); // turn on vibration motor
+        // delay(1000);           // wait for a second
       } else {
         Serial.print("CALM     \n");
-        httpRequestData = "{\"status\":2}";  
+        httpRequestData = "{\"status\":2}";
+        digitalWrite(D2, LOW); // turn off vibration motor
       }
              
       // Send HTTP POST request
