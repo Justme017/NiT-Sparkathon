@@ -10,9 +10,9 @@
 
 In an increasingly digital world, meaningful connection with our elderly loved ones can feel difficult. Phone calls can be intrusive, text messages can be hard to read, and video chats require technical comfort. This often leaves a gap—a desire to share a simple, silent moment of presence that says, "I'm thinking of you," without demanding an immediate response. Furthermore, how can we provide an accessible layer of safety that respects their independence?
 
-## ✨ Our Solution: CarePulse
+## ✨ Our Solution: Ember
 
-CarePulse is a two-device system designed to bridge this emotional and physical distance. It creates a dedicated, non-intrusive channel for connection and provides an easy-to-use safety net for elderly individuals living alone.
+Ember is a two-device system designed to bridge this emotional and physical distance. It creates a dedicated, non-intrusive channel for connection and provides an easy-to-use safety net for elderly individuals living alone.
 
 It consists of two paired devices:
 
